@@ -106,7 +106,7 @@ export default {
         const seen = new Set();
 
         // Sort games by start date (just in case)
-        const sortedGames = games
+        const sortedGames = allGames
             .filter(g => g.kampprogram_dato)
             .slice()
             .sort((a, b) => new Date(a.kampprogram_dato) - new Date(b.kampprogram_dato));
