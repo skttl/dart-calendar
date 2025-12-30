@@ -98,7 +98,7 @@ export default {
             "VERSION:2.0",
             `PRODID:-//DDU Dart Calendar [teamIds:${teamIds.join(",")}]//EN`,
             "CALSCALE:GREGORIAN",
-            `X-WR-CALNAME:${escapeICS(calendarName)}`,
+            `X-WR-CALNAME:${foldICSLine(escapeICS(calendarName))}`,
             `X-WR-TIMEZONE:${TIMEZONE}`,
             buildVTimezone(),
         ];
@@ -114,7 +114,7 @@ export default {
         for (let i = 0; i < sortedGames.length; i++) {
             const game = sortedGames[i];
             const start = new Date(game.kampprogram_dato);
-            const dtStart = toICSDate(start);
+            const dtStart = toICSLocal(start);
 
             // Default DTEND to 2 hours after DTSTART
             let end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
@@ -126,7 +126,7 @@ export default {
                     end = nextStart;
                 }
             }
-            const dtEnd = toICSDate(end);
+            const dtEnd = toICSLocal(end);
 
             const home = game.kampprogram_hjemmehold?.hold_holdnavn ?? "Home";
             const away = game.kampprogram_udehold?.hold_holdnavn ?? "Away";
@@ -141,7 +141,7 @@ export default {
                 `DTSTAMP:${toICSUTC(new Date())}`,
                 `DTSTART;TZID=${TIMEZONE}:${dtStart}`,
                 `DTEND;TZID=${TIMEZONE}:${dtEnd}`,
-                `SUMMARY:${escapeICS(`${game.raekke_id.raekke_navn}: ${home} vs ${away}`)}`,
+                `SUMMARY:${foldICSLine(escapeICS(`${game.raekke_id.raekke_navn}: ${home} vs ${away}`))}`,
                 "END:VEVENT"
             );
         }
@@ -164,6 +164,15 @@ export default {
 };
 
 // Helpers
+function foldICSLine(line) {
+    const max = 75;
+    let result = "";
+    while (line.length > max) {
+        result += line.slice(0, max) + "\r\n ";
+        line = line.slice(max);
+    }
+    return result + line;
+}
 
 function toICSUTC(date) {
     return date
@@ -172,7 +181,6 @@ function toICSUTC(date) {
         .split(".")[0] + "Z";
 }
 
-
 function toICSDate(date) {
     return (
         date
@@ -180,6 +188,10 @@ function toICSDate(date) {
             .replace(/[-:]/g, "")
             .split(".")[0] + "Z"
     );
+}
+function toICSLocal(date) {
+    // Format: YYYYMMDDTHHMMSS (no Z)
+    return date.toISOString().replace(/[-:]/g, "").split(".")[0];
 }
 
 function escapeICS(text) {
