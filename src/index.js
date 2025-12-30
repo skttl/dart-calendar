@@ -83,10 +83,10 @@ export default {
         const raekkeNavns = new Set();
         for (const game of allGames) {
             if (game.kampprogram_hjemmehold?.id && teamIds.includes(String(game.kampprogram_hjemmehold.id))) {
-                if (game.kampprogram_hjemmehold?.navn) teamNames.add(game.kampprogram_hjemmehold.navn);
+                if (game.kampprogram_hjemmehold?.hold_holdnavn) teamNames.add(game.kampprogram_hjemmehold.hold_holdnavn);
             }
             if (game.kampprogram_udehold?.id && teamIds.includes(String(game.kampprogram_udehold.id))) {
-                if (game.kampprogram_udehold?.navn) teamNames.add(game.kampprogram_udehold.navn);
+                if (game.kampprogram_udehold?.hold_holdnavn) teamNames.add(game.kampprogram_udehold.hold_holdnavn);
             }
             if (game.raekke_id?.raekke_navn) raekkeNavns.add(game.raekke_id.raekke_navn);
         }
@@ -128,8 +128,8 @@ export default {
             }
             const dtEnd = toICSDate(end);
 
-            const home = game.kampprogram_hjemmehold?.navn ?? "Home";
-            const away = game.kampprogram_udehold?.navn ?? "Away";
+            const home = game.kampprogram_hjemmehold?.hold_holdnavn ?? "Home";
+            const away = game.kampprogram_udehold?.hold_holdnavn ?? "Away";
 
             const uid = `${game.kampprogram_kampnr}-${dtStart}`;
             if (seen.has(uid)) continue;
