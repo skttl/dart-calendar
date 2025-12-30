@@ -164,6 +164,15 @@ export default {
 };
 
 // Helpers
+
+function toICSUTC(date) {
+    return date
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .split(".")[0] + "Z";
+}
+
+
 function toICSDate(date) {
     return (
         date
